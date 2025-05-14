@@ -1,0 +1,42 @@
+import ccxt
+
+# Custom BybitGlobal class to override the API URL
+class BybitGlobal(ccxt.bybit):
+    def describe(self):
+        return self.deep_extend(super(BybitGlobal, self).describe(), {
+            'urls': {
+                'api': {
+                    'public': 'https://api.bybitglobal.com',  # Updated API URL for public data
+                    'private': 'https://api.bybitglobal.com',  # Updated API URL for private data
+                },
+            },
+        })
+
+# API Keys and Secret
+api_key = 'xxx'  # Replace with your actual API key
+api_secret = 'yyy'  # Replace with your actual API secret
+
+# Instantiate the BybitGlobal class
+exchange = BybitGlobal({
+    'apiKey': api_key,
+    'secret': api_secret,
+    'enableRateLimit': True,
+})
+
+# Example: Retrieve active buy/sell orders
+def get_active_orders():
+    try:
+        orders = exchange.fetch_open_orders(symbol="USDT/USDT")
+        return orders
+    except Exception as e:
+        print(f"Error fetching orders: {e}")
+        return None
+
+# Test the API connection
+if __name__ == "__main__":
+    active_orders = get_active_orders()
+    if active_orders:
+        print("Active Orders:", active_orders)
+    else:
+        print("No active orders found or API error")
+
